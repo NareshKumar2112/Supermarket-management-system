@@ -1,0 +1,58 @@
+package com.market.admin;
+
+import java.sql.SQLException;
+import java.util.Scanner;
+
+import com.market.database.AdminDb;
+import com.market.database.Database;
+import com.market.entity.Admin;
+
+public class AdminEditor {
+
+	private String name;
+	private String userName;
+	private String password;
+	private AdminDb database;
+	private AdminValidator validator;
+	private Scanner scanner;
+	private Admin admin;
+	
+	public void edit() throws ClassNotFoundException, SQLException
+	{
+		admin=new Admin();
+		database=new AdminDb();
+		validator=new AdminValidator();
+		scanner=new Scanner(System.in);
+		System.out.println("Enter the details format(name-username-password)");
+		System.out.println("	->name ,mandatory\r\n"
+				+ "	->username - text, min 3 - 30 char, mandatory\r\n"
+				+ "	->password - text, alphanumeric, special char, min 8 char, mandatory\r\n");
+		String detail=scanner.nextLine();
+		String arr[]=detail.split("-");
+		admin.setName(arr[0].trim().toLowerCase());
+		admin.setPassword(arr[2].trim().toLowerCase());
+		admin.setUsername(arr[1].trim().toLowerCase());
+		if(arr.length==3&&validator.isValidName(arr[0].trim().toLowerCase())&&validator.isvalidpassword(arr[1].trim().toLowerCase())&&validator.isvalidUserName(arr[2].trim().toLowerCase()))
+		{
+			if(!database.checkAdmin())
+			{
+				System.out.println("Admin is not created");
+			}
+			else
+			{
+				if(database.editAdmin(admin))
+				{
+					System.out.println("Admin is updated successfully");
+				}
+				else
+				{
+					System.out.println("Admin is not updated");
+				}
+			}
+		}
+		else
+		{
+			System.out.println("Enter the correct format");
+		}
+	}
+}
